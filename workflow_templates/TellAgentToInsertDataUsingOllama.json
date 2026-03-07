@@ -1,0 +1,207 @@
+{
+  "name": "TellAgentToInsertDataUsingOllama",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "6229262b-13cd-4b70-86ea-cac0642465e6",
+      "name": "When chat message received",
+      "webhookId": "3442ac42-f901-40ef-8162-f9f65bf99c9f"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant that has access to the insertRowInDataTable tool. The function for the tool is to insert rows into the FruitAndVegTracker n8n data table. The columns are {\"Produce_Item\": \"string\", \"In_Stock_Count\": \"number\", \"Last_Arrival_Date\": \"datetime\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "bb8c8e24-1c60-4644-8111-550a56965c40",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-oss:120b-cloud",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        160
+      ],
+      "id": "6a125c98-4b80-490f-93d7-496a1fd28fcd",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "UmMELViRjITAqE1A",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeUnit": "minutes"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatHitlTool",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        128
+      ],
+      "id": "cfbb409f-6c24-4dc5-be71-e455439b565d",
+      "name": "Chat",
+      "webhookId": "576c9183-e85d-4882-aae9-a0585c491bd9"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "oK8bUPixxr36AzrS",
+          "mode": "list",
+          "cachedResultName": "FruitAndVegTracker",
+          "cachedResultUrl": "/projects/XAmIdheiefVKIquu/datatables/oK8bUPixxr36AzrS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Produce_Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Produce_Item', ``, 'string') }}",
+            "In_Stock_Count": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('In_Stock_Count', ``, 'number') }}",
+            "Last_Arrival_Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Last_Arrival_Date', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Produce_Item",
+              "displayName": "Produce_Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "In_Stock_Count",
+              "displayName": "In_Stock_Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last_Arrival_Date",
+              "displayName": "Last_Arrival_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        256
+      ],
+      "id": "d7f4a2e2-6708-454e-8a48-bfb010d2d193",
+      "name": "insertRowInDataTable"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insertRowInDataTable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chat",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "616e4c69-4b7a-441b-bef9-31cdea9259db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
+  },
+  "id": "8iMzfBRUvZC44Jrx",
+  "tags": []
+}

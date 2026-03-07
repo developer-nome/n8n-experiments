@@ -1,0 +1,236 @@
+{
+  "name": "Talk with your DataTable using Ollama",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Query DataTable Workflow",
+        "height": 505,
+        "width": 901,
+        "color": 7
+      },
+      "id": "3019b559-6100-4ead-8e1a-a7dece2a6982",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "73786411-5383-4921-82ee-06b3b582bab7",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        576,
+        48
+      ],
+      "webhookId": "1c0d08f0-abd0-4bdc-beef-370c27aae1a0",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "9df537e7-3ca2-4e72-bc85-ae0d944fbdd1",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        896,
+        272
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "57b2b959-9f25-475f-b6bb-842139725411",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        800,
+        48
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "model": "gpt-oss:120b-cloud",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        736,
+        272
+      ],
+      "id": "44714983-9f6d-438a-b591-c23910b1d7c7",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "UmMELViRjITAqE1A",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "oK8bUPixxr36AzrS",
+          "mode": "list",
+          "cachedResultName": "FruitAndVegTracker",
+          "cachedResultUrl": "/projects/XAmIdheiefVKIquu/datatables/oK8bUPixxr36AzrS"
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        272
+      ],
+      "id": "3faf0a93-16ff-49ec-a74d-2241342dcc0c",
+      "name": "getRowsInDataTable"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "oK8bUPixxr36AzrS",
+          "mode": "list",
+          "cachedResultName": "FruitAndVegTracker",
+          "cachedResultUrl": "/projects/XAmIdheiefVKIquu/datatables/oK8bUPixxr36AzrS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "In_Stock_Count": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('In_Stock_Count', ``, 'number') }}",
+            "Produce_Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Produce_Item', ``, 'string') }}",
+            "Last_Arrival_Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Last_Arrival_Date', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Produce_Item",
+              "displayName": "Produce_Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "In_Stock_Count",
+              "displayName": "In_Stock_Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last_Arrival_Date",
+              "displayName": "Last_Arrival_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        272
+      ],
+      "id": "80b7297f-8d63-40ee-9b0b-099f5ef97cf5",
+      "name": "InsertRowInDataTable"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getRowsInDataTable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "InsertRowInDataTable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cc86d88f-6298-4783-87f9-52f425fc6830",
+  "meta": {
+    "templateId": "2090",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
+  },
+  "id": "PavJt6D7Ltpw21U3",
+  "tags": []
+}

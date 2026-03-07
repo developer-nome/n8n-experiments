@@ -1,0 +1,168 @@
+{
+  "name": "Talk with your DataTable using LMStudio",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Query DataTable Workflow",
+        "height": 505,
+        "width": 901,
+        "color": 7
+      },
+      "id": "6385e3ec-6b88-4200-8d52-641a036dac77",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "343d6b4d-c559-4b2e-9d4a-05c6be4d39e7",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        576,
+        48
+      ],
+      "webhookId": "ee66c374-6205-4099-bb74-e1a4670982b0",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "333c9737-21e2-4bf5-b3de-30eb566c4ae7",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        896,
+        272
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant with the ability to tool call the function, getRowsInDataTable that uses n8n data table called FruitAndVegTracker."
+        }
+      },
+      "id": "42675c24-c278-4cb9-83d9-1bea8826bb14",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        800,
+        48
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "oK8bUPixxr36AzrS",
+          "mode": "list",
+          "cachedResultName": "FruitAndVegTracker",
+          "cachedResultUrl": "/projects/XAmIdheiefVKIquu/datatables/oK8bUPixxr36AzrS"
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        272
+      ],
+      "id": "e7286475-709e-4a64-ac83-c895cdafb6b6",
+      "name": "getRowsInDataTable"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "qwen3-4b-2507",
+          "mode": "list",
+          "cachedResultName": "qwen3-4b-2507"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        256
+      ],
+      "id": "ef9c0586-b41f-4135-aa1a-74cd7993d7ce",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "UgI8sljFULwalJ62",
+          "name": "LMStudio"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getRowsInDataTable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8b8ebb4c-190c-4a38-b2a9-650867ee15db",
+  "meta": {
+    "templateId": "2090",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
+  },
+  "id": "4LJuvn3NLzi1jnra",
+  "tags": []
+}
