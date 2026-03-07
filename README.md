@@ -2,7 +2,7 @@
 
 ---
 
-## Process_rows_in_CSV_file
+## Process_rows_in_CSV_file ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Process_rows_in_CSV_file.json))
 
 <img width="818" height="276" alt="image" src="https://github.com/user-attachments/assets/7fb61422-5449-48b5-bdc9-9eaf361581af" />
 
@@ -80,3 +80,6 @@ return lines.slice(1).map(line => {
   };
 });
 ```
+The AI Agent node can use values from the previous node in the Prompt field with an expression:
+<img width="865" height="464" alt="image" src="https://github.com/user-attachments/assets/76ce2ad3-8eac-4be2-83c9-3a50106349b6" />
+
