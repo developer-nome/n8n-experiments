@@ -81,5 +81,28 @@ return lines.slice(1).map(line => {
 });
 ```
 The AI Agent node can use values from the previous node in the Prompt field with an expression:
-<img width="865" height="464" alt="image" src="https://github.com/user-attachments/assets/76ce2ad3-8eac-4be2-83c9-3a50106349b6" />
+<img width="692" height="371" alt="image" src="https://github.com/user-attachments/assets/3773c208-a7c4-4ed7-b4f8-71c45e99ca50" />
+The Merge node then utilizes the data from the node before the AI Agent to perserve the values for saving a new .csv file later
+<img width="617" height="398" alt="image" src="https://github.com/user-attachments/assets/7e6347e3-b162-439d-9a1a-175291829635" />
+The following Code Node is for combinig the original values with the output of the AI Agent into 1 json object (mode = Run Once for Each Item):
+```
+return {
+  json: {
+    produce_item: $json["Produce Item"],
+    in_stock_count: $json["In Stock Count"],
+    last_arrival_date: $json["Last Arrival Date"],
+    haiku: $json["output"]
+  }
+};
+```
+
+---
+---
+
+## Talk with your DataTable using LMStudio ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Talk%20with%20your%20DataTable%20using%20LMStudio.json))
+
+<img width="463" height="255" alt="image" src="https://github.com/user-attachments/assets/fd5b7822-c2b7-4ab3-84d9-5d40adc45c6c" />
+
+This example shows how to use model provider that is not listed in n8n's list (must be compatible with OpenAI's API structure) and that you can query n8n Data Tables. The AI Agent nodes's System Message should mention that the agent has the ability to tool call the function, *insertFunctionNameHere* that uses the n8n data talbe called *useTableNameHere*.
+
 
