@@ -5,6 +5,31 @@ The examples and template files were made with n8n version 2.10.4
 Worflow nodes inside templates that were created using earlier versions than the version you are running my cause error or broken flows. It is recommended to create flows starting from a blank template if you are using a version different from the version listed above.
 
 ---
+## Create_And_Fill_New_Data_Table ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Create_And_Fill_New_Data_Table.json))
+
+This example will create and fill a new n8n Data Table.
+
+The data is in json format in the Code node between the create table node and the insert row node (only 2 rows shown in examople code below):
+
+```
+const rows = [
+  {
+    Produce_Item: "Bananas",
+    In_Stock_Count: 10,
+    Last_Arrival_Date: "2026-01-10"
+  },
+  {
+    Produce_Item: "Pineapples",
+    In_Stock_Count: 19,
+    Last_Arrival_Date: "2026-01-16"
+  }
+];
+
+return rows.map(row => ({ json: row }));
+```
+
+---
+---
 
 ## Process_rows_in_CSV_file ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Process_rows_in_CSV_file.json))
 
