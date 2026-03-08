@@ -52,7 +52,7 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.5,
       "position": [
-        0,
+        48,
         -80
       ],
       "id": "30e5cae3-b191-4dce-8866-0ba647c5dbcc",
@@ -91,7 +91,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "return {\n  json: {\n    produce_item: $json[\"Produce Item\"],\n    in_stock_count: $json[\"In Stock Count\"],\n    last_arrival_date: $json[\"Last Arrival Date\"],\n    haiku: $json[\"output\"]\n  }\n};"
+        "jsCode": "return {\n  json: {\n    produce_item: $json[\"Produce_Item\"],\n    in_stock_count: $json[\"In_Stock_Count\"],\n    last_arrival_date: $json[\"Last_Arrival_Date\"],\n    haiku: $json[\"output\"]\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -237,7 +237,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "2f4c919e-912b-4a18-a7f2-102b742b2420",
+  "versionId": "cc572510-37b8-4f5b-99f3-aa0a4e7e80ce",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
