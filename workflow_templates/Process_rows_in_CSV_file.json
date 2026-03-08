@@ -91,7 +91,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "return {\n  json: {\n    produce_item: $json[\"Produce_Item\"],\n    in_stock_count: $json[\"In_Stock_Count\"],\n    last_arrival_date: $json[\"Last_Arrival_Date\"],\n    haiku: $json[\"output\"]\n  }\n};"
+        "jsCode": "const { output, ...rest } = $json;\n\nreturn {\n  json: {\n    ...rest,\n    haiku: output\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -237,7 +237,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "cc572510-37b8-4f5b-99f3-aa0a4e7e80ce",
+  "versionId": "341610eb-8204-4077-9a78-6248e9269daf",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
