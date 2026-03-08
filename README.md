@@ -1,5 +1,9 @@
 # n8n-experiments
 
+The examples and template files were made with n8n version 2.10.4
+
+Worflow nodes inside templates that were created using earlier versions than the version you are running my cause error or broken flows. It is recommended to create flows starting from a blank template if you are using a version different from the version listed above.
+
 ---
 
 ## Process_rows_in_CSV_file ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Process_rows_in_CSV_file.json))
