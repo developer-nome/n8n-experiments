@@ -97,12 +97,12 @@ The Merge node then utilizes the data from the node before the AI Agent to perse
 The following Code Node is for combinig the original values with the output of the AI Agent into 1 json object (mode = Run Once for Each Item):
 
 ```
+const { output, ...rest } = $json;
+
 return {
   json: {
-    produce_item: $json["Produce Item"],
-    in_stock_count: $json["In Stock Count"],
-    last_arrival_date: $json["Last Arrival Date"],
-    haiku: $json["output"]
+    ...rest,
+    haiku: output
   }
 };
 ```
