@@ -1,0 +1,136 @@
+{
+  "name": "Create_And_Fill_New_Data_Table",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "78f714a9-835f-4459-bfb3-1364432fc949",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "FruitAndVegTracker",
+        "columns": {
+          "column": [
+            {
+              "name": "Produce_Item"
+            },
+            {
+              "name": "In_Stock_Count",
+              "type": "number"
+            },
+            {
+              "name": "Last_Arrival_Date",
+              "type": "date"
+            }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f08be329-40dd-4124-af4b-19e9ce1c673d",
+      "name": "Create a data table"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = [\n  {\n    Produce_Item: \"Bananas\",\n    In_Stock_Count: 10,\n    Last_Arrival_Date: \"2026-01-10\"\n  },\n  {\n    Produce_Item: \"Oranges\",\n    In_Stock_Count: 15,\n    Last_Arrival_Date: \"2026-01-11\"\n  },\n  {\n    Produce_Item: \"Strawberries\",\n    In_Stock_Count: 22,\n    Last_Arrival_Date: \"2026-01-12\"\n  },\n  {\n    Produce_Item: \"Romain lettuce\",\n    In_Stock_Count: 3,\n    Last_Arrival_Date: \"2026-01-13\"\n  },\n  {\n    Produce_Item: \"Asparagus\",\n    In_Stock_Count: 14,\n    Last_Arrival_Date: \"2026-01-14\"\n  },\n  {\n    Produce_Item: \"Cucumbers\",\n    In_Stock_Count: 7,\n    Last_Arrival_Date: \"2026-01-15\"\n  },\n  {\n    Produce_Item: \"Pineapples\",\n    In_Stock_Count: 19,\n    Last_Arrival_Date: \"2026-01-16\"\n  }\n];\n\nreturn rows.map(row => ({ json: row }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "0e1c2054-cd80-49ca-8eff-e9413cebf4e9",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "=FruitAndVegTracker"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "aaf37f22-6d0f-4238-9edb-06b93e5d7a1b",
+      "name": "Insert row"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create a data table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a data table": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "456faae4-df6d-4b0e-bd50-cbfcbc32f5a9",
+  "meta": {
+    "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
+  },
+  "id": "aTswPsHrUFHHsdHf",
+  "tags": []
+}
