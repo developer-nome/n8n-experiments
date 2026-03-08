@@ -7,6 +7,8 @@ Worflow nodes inside templates that were created using earlier versions than the
 ---
 ## Create_And_Fill_New_Data_Table ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Create_And_Fill_New_Data_Table.json))
 
+<img width="713" height="128" alt="image" src="https://github.com/user-attachments/assets/01e162bc-2ebc-4906-95d1-f6308313f571" />
+
 This example will create and fill a new n8n Data Table.
 
 The data is in json format in the Code node between the create table node and the insert row node (only 2 rows shown in examople code below):
