@@ -42,6 +42,10 @@ This example shows:
 - How to utilize an API for data
 - How to iterate through the data and pass data elements to the AI Agent
 
+<img width="612" height="228" alt="image" src="https://github.com/user-attachments/assets/ab4488a5-2179-4e65-8cbe-6344d65d1f79" />
+
+<img width="540" height="225" alt="image" src="https://github.com/user-attachments/assets/a87a962a-ef59-411d-a6a9-a20df8689327" />
+
 ---
 ---
 
