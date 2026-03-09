@@ -1,0 +1,37 @@
+[
+  {
+    "Produce_Item": "Bananas",
+    "In_Stock_Count": 10,
+    "Last_Arrival_Date": "2026-01-10"
+  },
+  {
+    "Produce_Item": "Oranges",
+    "In_Stock_Count": 15,
+    "Last_Arrival_Date": "2026-01-11"
+  },
+  {
+    "Produce_Item": "Strawberries",
+    "In_Stock_Count": 22,
+    "Last_Arrival_Date": "2026-01-12"
+  },
+  {
+    "Produce_Item": "Romain lettuce",
+    "In_Stock_Count": 3,
+    "Last_Arrival_Date": "2026-01-13"
+  },
+  {
+    "Produce_Item": "Asparagus",
+    "In_Stock_Count": 14,
+    "Last_Arrival_Date": "2026-01-14"
+  },
+  {
+    "Produce_Item": "Cucumbers",
+    "In_Stock_Count": 7,
+    "Last_Arrival_Date": "2026-01-15"
+  },
+  {
+    "Produce_Item": "Pineapples",
+    "In_Stock_Count": 19,
+    "Last_Arrival_Date": "2026-01-16"
+  }
+]
