@@ -1,0 +1,121 @@
+{
+  "name": "ProcessJsonFromAPI",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://developer-nome.github.io/n8n-experiments/sample_data_files/{{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        0
+      ],
+      "id": "3a741a0d-dbf2-4bb0-aff6-c7b3380e0850",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a 1 line poem about {{ $json.Produce_Item }}.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        784,
+        0
+      ],
+      "id": "8fdc8ccc-8e24-4ca5-ab26-21d3e233a080",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "rnj-1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        656,
+        208
+      ],
+      "id": "36dc2b5b-cb26-4261-b6c2-44ec863c85a5",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "UmMELViRjITAqE1A",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        368,
+        0
+      ],
+      "id": "c516c01a-56eb-401c-929e-e6d049e73e9a",
+      "name": "When chat message received",
+      "webhookId": "ab6b165b-cc95-426f-bb24-783fe110ab10",
+      "notesInFlow": true,
+      "notes": "FruitAndVegTracker.json"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9cc4626d-a3ee-4058-af4b-b06c5c3e83f4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "784a1278bc4aff15930d1f26b75dd8d23c7fcd477049109bb3e62a0b6be6a0b5"
+  },
+  "id": "jaa8zSw2FMeQnYPK",
+  "tags": []
+}
