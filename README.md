@@ -33,6 +33,18 @@ return rows.map(row => ({ json: row }));
 ---
 ---
 
+## ProcessJsonFromAPI ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/ProcessJsonFromAPI.json))
+
+<img width="634" height="261" alt="image" src="https://github.com/user-attachments/assets/b05c7824-bf59-4c66-abe1-c63cd532d935" />
+
+This example shows:
+- How to pass data from the chat window to the API call
+- How to utilize an API for data
+- How to iterate through the data and pass data elements to the AI Agent
+
+---
+---
+
 ## Process_rows_in_CSV_file ([template link](https://github.com/developer-nome/n8n-experiments/blob/main/workflow_templates/Process_rows_in_CSV_file.json))
 
 <img width="818" height="276" alt="image" src="https://github.com/user-attachments/assets/7fb61422-5449-48b5-bdc9-9eaf361581af" />
