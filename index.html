@@ -1,10 +1,508 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Your Page Title</title>
-</head>
-<body>
-    <h1>Placeholder for GitHub Pages for this repo</h1>
-</body>
-</html>
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+
+// --- Icons (SVG Inline) ---
+const IconPlus = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+);
+const IconTrash = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+);
+const IconPlay = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+);
+const IconGitBranch = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>
+);
+const IconActivity = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+);
+const IconCopy = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+);
+const IconDownload = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+);
+const IconSparkles = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"></path></svg>
+);
+const IconLoader = () => (
+  <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+);
+
+const NODE_TYPES = {
+  TRIGGER: { id: 'trigger', label: 'Trigger', color: 'bg-emerald-500', icon: IconPlay },
+  PROCESS: { id: 'process', label: 'Process', color: 'bg-blue-500', icon: IconActivity },
+  CONDITION: { id: 'condition', label: 'Condition', color: 'bg-amber-500', icon: IconGitBranch },
+};
+
+const App = () => {
+  const [nodes, setNodes] = useState([
+    { id: '1', type: 'trigger', label: 'User Signup', x: 100, y: 150 },
+    { id: '2', type: 'condition', label: 'Verified Email?', x: 350, y: 150 },
+    { id: '3', type: 'process', label: 'Send Welcome Kit', x: 600, y: 100 },
+  ]);
+  const [edges, setEdges] = useState([
+    { id: 'e1-2', source: '1', target: '2' },
+    { id: 'e2-3', source: '2', target: '3' },
+  ]);
+
+  const [draggingNodeId, setDraggingNodeId] = useState(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [connectingSourceId, setConnectingSourceId] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [showExportToast, setShowExportToast] = useState(false);
+  const [importText, setImportText] = useState("");
+  const [importError, setImportError] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiAnalysis, setAiAnalysis] = useState("");
+  
+  const canvasRef = useRef(null);
+  const apiKey = "";
+
+  // --- Gemini API Logic ---
+  const callGemini = async (prompt, systemInstruction, asJson = false) => {
+    let retries = 5;
+    let delay = 1000;
+    
+    const payload = {
+      contents: [{ parts: [{ text: prompt }] }],
+      systemInstruction: { parts: [{ text: systemInstruction }] }
+    };
+
+    if (asJson) {
+      payload.generationConfig = {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            nodes: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  id: { type: "STRING" },
+                  type: { type: "STRING", enum: ["trigger", "process", "condition"] },
+                  label: { type: "STRING" },
+                  x: { type: "NUMBER" },
+                  y: { type: "NUMBER" }
+                },
+                required: ["id", "type", "label", "x", "y"]
+              }
+            },
+            edges: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  id: { type: "STRING" },
+                  source: { type: "STRING" },
+                  target: { type: "STRING" }
+                },
+                required: ["id", "source", "target"]
+              }
+            }
+          },
+          required: ["nodes", "edges"]
+        }
+      };
+    }
+
+    while (retries > 0) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) throw new Error("API failed");
+        
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        return asJson ? JSON.parse(text) : text;
+      } catch (err) {
+        retries--;
+        if (retries === 0) throw err;
+        await new Promise(r => setTimeout(r, delay));
+        delay *= 2;
+      }
+    }
+  };
+
+  const handleAiArchitect = async () => {
+    if (!aiPrompt.trim()) return;
+    setIsGenerating(true);
+    setImportError(null);
+    try {
+      const result = await callGemini(
+        `Generate a workflow for: ${aiPrompt}`,
+        "You are an expert systems designer. Generate a logical workflow diagram in JSON format. Use 'trigger' for entry points, 'process' for actions, and 'condition' for decisions. Space them out nicely on a 2D canvas using x (100-1000) and y (100-800) coordinates. Ensure all nodes are logically connected.",
+        true
+      );
+      setNodes(result.nodes);
+      setEdges(result.edges);
+      setAiPrompt("");
+    } catch (err) {
+      setImportError("AI generation failed. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleAiAnalyze = async () => {
+    setIsGenerating(true);
+    try {
+      const currentFlow = JSON.stringify({ nodes, edges });
+      const feedback = await callGemini(
+        `Analyze this workflow: ${currentFlow}`,
+        "You are a workflow consultant. Provide a short, bulleted analysis (max 100 words) of the current workflow. Point out missing steps, logical dead-ends, or ways to optimize the process. Be encouraging but critical.",
+        false
+      );
+      setAiAnalysis(feedback);
+    } catch (err) {
+      setImportError("AI analysis failed.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // --- Helpers ---
+  const getNode = (id) => nodes.find(n => n.id === id);
+
+  const addNode = (type) => {
+    const newNode = {
+      id: Date.now().toString(),
+      type,
+      label: `New ${NODE_TYPES[type.toUpperCase()].label}`,
+      x: 50 + Math.random() * 100,
+      y: 50 + Math.random() * 100,
+    };
+    setNodes([...nodes, newNode]);
+  };
+
+  const deleteNode = (id) => {
+    setNodes(nodes.filter(n => n.id !== id));
+    setEdges(edges.filter(e => e.source !== id && e.target !== id));
+  };
+
+  const updateNodeLabel = (id, label) => {
+    setNodes(nodes.map(n => n.id === id ? { ...n, label } : n));
+  };
+
+  const handleExport = () => {
+    const data = JSON.stringify({ nodes, edges }, null, 2);
+    const textArea = document.createElement("textarea");
+    textArea.value = data;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setShowExportToast(true);
+      setTimeout(() => setShowExportToast(false), 2000);
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+    document.body.removeChild(textArea);
+  };
+
+  const handleImport = () => {
+    setImportError(null);
+    try {
+      const parsed = JSON.parse(importText);
+      if (parsed && Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) {
+        setNodes(parsed.nodes);
+        setEdges(parsed.edges);
+        setImportText("");
+      } else {
+        setImportError("Invalid format: JSON must contain 'nodes' and 'edges' arrays.");
+      }
+    } catch (e) {
+      setImportError("Invalid JSON: Could not parse input text.");
+    }
+  };
+
+  // --- Interaction Handlers ---
+  const handleMouseDown = (e, node) => {
+    if (e.target.closest('.port') || e.target.closest('.delete-btn')) return;
+    setDraggingNodeId(node.id);
+    const rect = canvasRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: (e.clientX - rect.left) - node.x,
+      y: (e.clientY - rect.top) - node.y,
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePos({ x, y });
+
+    if (draggingNodeId) {
+      setNodes(prev => prev.map(n => 
+        n.id === draggingNodeId ? { ...n, x: x - dragOffset.x, y: y - dragOffset.y } : n
+      ));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDraggingNodeId(null);
+  };
+
+  const startConnection = (nodeId) => {
+    setConnectingSourceId(nodeId);
+  };
+
+  const completeConnection = (targetId) => {
+    if (connectingSourceId && connectingSourceId !== targetId) {
+      if (!edges.find(e => e.source === connectingSourceId && e.target === targetId)) {
+        setEdges([...edges, { id: `e${connectingSourceId}-${targetId}`, source: connectingSourceId, target: targetId }]);
+      }
+    }
+    setConnectingSourceId(null);
+  };
+
+  const deleteEdge = (edgeId) => {
+    setEdges(edges.filter(e => e.id !== edgeId));
+  };
+
+  const getPortCoords = (nodeId, isSource) => {
+    const node = getNode(nodeId);
+    if (!node) return { x: 0, y: 0 };
+    return {
+      x: isSource ? node.x + 180 : node.x,
+      y: node.y + 40
+    };
+  };
+
+  return (
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-900">
+      {/* Sidebar */}
+      <div className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm z-20">
+        <div className="p-6 pb-4 border-b border-slate-100">
+          <h1 className="text-xl font-bold text-slate-800">Visual Flow</h1>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Workflow Designer</p>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+          
+          {/* AI Section */}
+          <section className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+            <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+               <IconSparkles /> AI Assistant
+            </p>
+            <textarea
+              className="w-full h-20 p-3 text-xs bg-white border border-blue-200 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400"
+              placeholder="Describe a workflow..."
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+            />
+            <button
+              onClick={handleAiArchitect}
+              disabled={isGenerating || !aiPrompt.trim()}
+              className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2.5 rounded-xl text-xs font-extrabold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-[0.98]"
+            >
+              {isGenerating ? <IconLoader /> : <IconSparkles />} ✨ AI Workflow Architect
+            </button>
+            <button
+              onClick={handleAiAnalyze}
+              disabled={isGenerating || nodes.length === 0}
+              className="mt-2 w-full flex items-center justify-center gap-2 bg-white text-blue-700 py-2.5 rounded-xl text-xs font-bold border border-blue-200 hover:bg-blue-50 disabled:opacity-50 transition-all"
+            >
+              {isGenerating ? <IconLoader /> : <IconActivity />} ✨ Analyze & Improve
+            </button>
+            
+            {aiAnalysis && (
+              <div className="mt-4 p-3 bg-white border border-blue-100 rounded-xl text-[11px] text-slate-600 leading-relaxed max-h-40 overflow-y-auto relative">
+                <button onClick={() => setAiAnalysis("")} className="absolute top-2 right-2 text-slate-300 hover:text-slate-500">
+                  <IconTrash />
+                </button>
+                <div className="font-bold text-blue-600 mb-1 uppercase tracking-tighter">AI Feedback</div>
+                {aiAnalysis}
+              </div>
+            )}
+          </section>
+
+          {/* Components Section */}
+          <section>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Add Elements</p>
+            <div className="grid grid-cols-1 gap-2">
+              {Object.entries(NODE_TYPES).map(([key, config]) => (
+                <button
+                  key={key}
+                  onClick={() => addNode(config.id)}
+                  className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all group"
+                >
+                  <div className={`${config.color} p-2 rounded-lg text-white group-hover:scale-110 transition-transform`}>
+                    <config.icon />
+                  </div>
+                  <span className="text-sm font-medium">{config.label}</span>
+                  <div className="ml-auto text-slate-300"><IconPlus /></div>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* Import Section */}
+          <section className="border-t border-slate-100 pt-6">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Import Layout</p>
+            <textarea
+              className={`w-full h-20 p-3 text-xs font-mono bg-slate-50 border rounded-xl resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all ${importError ? 'border-red-400' : 'border-slate-200'}`}
+              placeholder="Paste JSON here..."
+              value={importText}
+              onChange={(e) => setImportText(e.target.value)}
+            />
+            {importError && (
+              <p className="text-[10px] text-red-500 mt-2 font-medium leading-tight">{importError}</p>
+            )}
+            <button
+              onClick={handleImport}
+              disabled={!importText.trim()}
+              className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2.5 rounded-xl text-xs font-extrabold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-100 active:scale-[0.98]"
+            >
+              <IconDownload /> Apply JSON
+            </button>
+          </section>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="p-6 border-t border-slate-100 bg-slate-50/50">
+          <button 
+            onClick={handleExport}
+            className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white p-3 rounded-xl text-sm font-medium hover:bg-slate-700 transition-colors shadow-lg shadow-slate-200"
+          >
+            <IconCopy /> Copy Current Layout
+          </button>
+        </div>
+      </div>
+
+      {/* Canvas Area */}
+      <div 
+        ref={canvasRef}
+        className="flex-1 relative overflow-hidden bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px]"
+        onMouseMove={handleMouseMove}
+        onMouseUp={() => {
+          handleMouseUp();
+          if (connectingSourceId) setConnectingSourceId(null);
+        }}
+      >
+        {/* Toast Notification */}
+        {showExportToast && (
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-2xl z-50 animate-bounce flex items-center gap-2">
+            <IconCopy /> Layout Copied!
+          </div>
+        )}
+
+        {/* SVG Edge Layer */}
+        <svg className="absolute inset-0 pointer-events-none w-full h-full">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orientation="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+            </marker>
+          </defs>
+          
+          {connectingSourceId && (
+            <line
+              x1={getPortCoords(connectingSourceId, true).x}
+              y1={getPortCoords(connectingSourceId, true).y}
+              x2={mousePos.x}
+              y2={mousePos.y}
+              stroke="#3b82f6"
+              strokeWidth="2"
+              strokeDasharray="4 2"
+            />
+          )}
+
+          {edges.map(edge => {
+            const start = getPortCoords(edge.source, true);
+            const end = getPortCoords(edge.target, false);
+            const midX = (start.x + end.x) / 2;
+            const path = `M ${start.x} ${start.y} C ${midX} ${start.y}, ${midX} ${end.y}, ${end.x} ${end.y}`;
+
+            return (
+              <g key={edge.id} className="group pointer-events-auto">
+                <path
+                  d={path}
+                  fill="none"
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  markerEnd="url(#arrowhead)"
+                  className="group-hover:stroke-blue-400 transition-colors cursor-pointer"
+                  onClick={() => deleteEdge(edge.id)}
+                />
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Nodes Layer */}
+        {nodes.map(node => (
+          <div
+            key={node.id}
+            onMouseDown={(e) => handleMouseDown(e, node)}
+            onMouseUp={() => completeConnection(node.id)}
+            style={{ 
+              transform: `translate(${node.x}px, ${node.y}px)`,
+              width: '180px'
+            }}
+            className={`absolute bg-white border-2 border-slate-200 rounded-2xl shadow-lg cursor-grab active:cursor-grabbing select-none transition-all hover:shadow-xl ${draggingNodeId === node.id ? 'z-50 ring-2 ring-blue-500 ring-offset-2 shadow-2xl scale-[1.02]' : 'z-10'}`}
+          >
+            <div className={`h-2 w-full rounded-t-2xl ${NODE_TYPES[node.type.toUpperCase()].color}`} />
+            
+            <div className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div className={`p-1.5 rounded-md ${NODE_TYPES[node.type.toUpperCase()].color} text-white opacity-90`}>
+                  {React.createElement(NODE_TYPES[node.type.toUpperCase()].icon)}
+                </div>
+                <button 
+                  onClick={() => deleteNode(node.id)}
+                  className="delete-btn text-slate-300 hover:text-red-500 transition-colors p-1"
+                >
+                  <IconTrash />
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={node.label}
+                onChange={(e) => updateNodeLabel(node.id, e.target.value)}
+                className="w-full text-sm font-semibold text-slate-700 bg-transparent border-none focus:ring-0 p-0 outline-none"
+              />
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{node.type}</p>
+            </div>
+
+            <div className={`port absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-slate-200 bg-white hover:bg-blue-100 transition-colors ${connectingSourceId ? 'animate-pulse scale-125 border-blue-400 bg-blue-50' : ''}`} />
+
+            <div 
+              onMouseDown={(e) => { e.stopPropagation(); startConnection(node.id); }}
+              className="port absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-slate-300 bg-white hover:bg-blue-500 hover:border-blue-500 cursor-crosshair transition-all shadow-sm"
+            />
+          </div>
+        ))}
+
+        {nodes.length === 0 && !isGenerating && (
+          <div className="flex items-center justify-center h-full text-slate-400 flex-col gap-4">
+            <div className="p-8 border-2 border-dashed border-slate-200 rounded-3xl bg-white/50 backdrop-blur-sm">
+              <p className="text-lg font-medium text-slate-600 text-center">Your canvas is empty</p>
+              <p className="text-sm text-slate-400 text-center max-w-[200px]">Use the ✨ AI Architect to generate a flow from a prompt!</p>
+            </div>
+          </div>
+        )}
+
+        {isGenerating && (
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px] z-[100] flex items-center justify-center pointer-events-none">
+             <div className="bg-white p-6 rounded-3xl shadow-2xl border border-blue-50 flex flex-col items-center gap-4">
+                <div className="p-3 bg-blue-600 rounded-full text-white shadow-lg animate-pulse">
+                  <IconSparkles />
+                </div>
+                <p className="text-sm font-bold text-blue-700 animate-pulse">Gemini is thinking...</p>
+             </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
